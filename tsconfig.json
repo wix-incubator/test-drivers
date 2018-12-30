@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es5",
+    "jsx": "react",
+    "lib": ["dom", "es2016"]
+  },
+  "include": [
+    "./test/**/*.ts"
+  ],
+  "files": [
+    "./src/index.ts"
+  ]
+}
