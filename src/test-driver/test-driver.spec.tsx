@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { TestDriverConfig } from './test-driver-config';
 import { createTestDriver, TestDriver } from './test-driver';
 import { ApiMock, Method, createApiMock } from '../api-mocks';
