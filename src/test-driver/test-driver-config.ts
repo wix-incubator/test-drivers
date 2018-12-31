@@ -9,16 +9,3 @@ export interface FullTestDriverConfig<Environment> {
 
 export interface TestDriverConfig<Environment = {}>
   extends Partial<FullTestDriverConfig<Environment>> {}
-
-export const getDefaultConfig: FullTestDriverConfig<any> = {
-  wrapWith() {
-    return (componentToWrap: any) => componentToWrap;
-  },
-  getInitialEnvironment(): {} {
-    return {};
-  },
-  getDefaultApiMocks(): ApiMock[] {
-    return [];
-  },
-  applyMocks() {},
-};

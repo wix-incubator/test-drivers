@@ -1,4 +1,1 @@
-import { createTestDriver } from './test-driver/test-driver';
-
-export { createTestDriver };
-export const TestDriver = createTestDriver();
+export { createTestDriver, TestDriver } from './test-driver/test-driver';
