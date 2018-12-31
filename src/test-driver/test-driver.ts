@@ -7,7 +7,7 @@ import { TestDriverConfig } from './test-driver-config';
 
 configure({ adapter: new React16Adapter() });
 
-export class TestDriver<Props = {}, Environment = {}> {
+export class TestDriver<Props = any, Environment = any> {
   component: ReactWrapper;
   componentData: Props;
   environment: Environment;
@@ -133,10 +133,10 @@ export class TestDriver<Props = {}, Environment = {}> {
   }
 }
 
-export const createTestDriver = <Environment = {}>(
+export const createTestDriver = <Environment = any>(
   driverConfig?: TestDriverConfig<Environment>,
 ) => {
-  return class ConfiguredTestDriver<Props = {}> extends TestDriver<
+  return class ConfiguredTestDriver<Props = any> extends TestDriver<
     Props,
     Environment
   > {
