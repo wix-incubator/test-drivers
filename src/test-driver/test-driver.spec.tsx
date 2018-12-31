@@ -1,6 +1,6 @@
 import React from 'react';
 import { TestDriverConfig } from './test-driver-config';
-import { createTestDriver } from './test-driver';
+import { createTestDriver, TestDriver } from './test-driver';
 import { ApiMock, Method, createApiMock } from '../api-mocks';
 
 const SimpleFunctionComponent: React.FC = () => (
@@ -8,8 +8,7 @@ const SimpleFunctionComponent: React.FC = () => (
 );
 
 describe('TestDriver', () => {
-  it('should successfully render a simple component', async () => {
-    const TestDriver = createTestDriver();
+  it('should render a simple component by using TestDriver directly', async () => {
     const driver = new TestDriver();
 
     await driver.render(SimpleFunctionComponent);
@@ -18,13 +17,23 @@ describe('TestDriver', () => {
     expect(driver.getByDataHook('child').text()).toEqual('Child');
   });
 
+  it('should render a simple component by creating a TestDriver via createTestDriver()', async () => {
+    const AppTestDriver = createTestDriver();
+    const driver = new AppTestDriver();
+
+    await driver.render(SimpleFunctionComponent);
+
+    expect(driver.getByDataHook('child').exists()).toEqual(true);
+    expect(driver.getByDataHook('child').text()).toEqual('Child');
+  });
+
   it('should wrap component', async () => {
-    const TestDriver = createTestDriver({
-      wrapWith: () => (componentToWrap: any) => {
+    const AppTestDriver = createTestDriver({
+      wrapWith: () => componentToWrap => {
         return <div data-hook="wrapper">{componentToWrap}</div>;
       },
     });
-    const driver = new TestDriver();
+    const driver = new AppTestDriver();
 
     await driver.render(SimpleFunctionComponent);
 
@@ -43,8 +52,8 @@ describe('TestDriver', () => {
       </div>
     );
 
-    const TestDriver = createTestDriver();
-    const driver = new TestDriver<TestCompProps>();
+    const AppTestDriver = createTestDriver();
+    const driver = new AppTestDriver<TestCompProps>();
 
     await driver.givenProp('text', 'hello').render(TestComp);
 
@@ -58,7 +67,7 @@ describe('TestDriver', () => {
     }
     const testDriverConfig: TestDriverConfig<Env> = {
       wrapWith(environment: Env) {
-        return (componentToWrap: any) => {
+        return componentToWrap => {
           return (
             <div>
               <div data-hook="header">{environment.headerText}</div>
@@ -74,8 +83,8 @@ describe('TestDriver', () => {
       },
     };
 
-    const TestDriver = createTestDriver(testDriverConfig);
-    const driver = new TestDriver();
+    const AppTestDriver = createTestDriver(testDriverConfig);
+    const driver = new AppTestDriver();
 
     await driver.render(SimpleFunctionComponent);
 
@@ -105,8 +114,8 @@ describe('TestDriver', () => {
       },
     };
 
-    const TestDriver = createTestDriver(testDriverConfig);
-    const driver = new TestDriver();
+    const AppTestDriver = createTestDriver(testDriverConfig);
+    const driver = new AppTestDriver();
 
     driver.givenEnv('headerText', 'New Header!');
     await driver.render(SimpleFunctionComponent);
@@ -118,8 +127,8 @@ describe('TestDriver', () => {
   it('should unmount the component during cleanup', async () => {
     const unmounting = jest.fn();
 
-    const TestDriver = createTestDriver();
-    const driver = new TestDriver();
+    const AppTestDriver = createTestDriver();
+    const driver = new AppTestDriver();
 
     class TestComp extends React.Component {
       componentWillUnmount() {
@@ -139,15 +148,15 @@ describe('TestDriver', () => {
   it('should clean the dom during cleanup if the component was attached to dom', async () => {
     const unmounting = jest.fn();
 
-    const TestDriver = createTestDriver();
-    const driver = new TestDriver();
+    const AppTestDriver = createTestDriver();
+    const driver = new AppTestDriver();
 
     class TestComp extends React.Component {
       componentWillUnmount() {
         unmounting();
       }
       render() {
-        return <div>Test Comp</div>;
+        return <div />;
       }
     }
 
@@ -162,18 +171,18 @@ describe('TestDriver', () => {
   });
 
   it('should not throw if cleanup is called without a component', () => {
-    const TestDriver = createTestDriver();
-    const driver = new TestDriver();
+    const AppTestDriver = createTestDriver();
+    const driver = new AppTestDriver();
 
     expect(() => driver.cleanup()).not.toThrow();
   });
 
   it('should assert whether a component exists', async () => {
-    const TestDriver = createTestDriver();
-    const driver = new TestDriver();
+    const AppTestDriver = createTestDriver();
+    const driver = new AppTestDriver();
 
     await driver.render(SimpleFunctionComponent);
-    const subDriver = new TestDriver(driver.getByDataHook('invalid-hook'));
+    const subDriver = new AppTestDriver(driver.getByDataHook('invalid-hook'));
 
     expect(driver.exists()).toEqual(true);
     expect(subDriver.exists()).toEqual(false);
@@ -187,8 +196,8 @@ describe('TestDriver', () => {
         mocks.forEach(mock => mocker(mock));
       },
     };
-    const TestDriver = createTestDriver(testDriverConfig);
-    const driver = new TestDriver();
+    const AppTestDriver = createTestDriver(testDriverConfig);
+    const driver = new AppTestDriver();
 
     const getSettingsMock = createApiMock({
       method: Method.GET,
@@ -209,8 +218,8 @@ describe('TestDriver', () => {
         mocks.forEach(mock => mocker(mock));
       },
     };
-    const TestDriver = createTestDriver(testDriverConfig);
-    const driver = new TestDriver();
+    const AppTestDriver = createTestDriver(testDriverConfig);
+    const driver = new AppTestDriver();
 
     await driver.render(SimpleFunctionComponent);
 
@@ -224,7 +233,7 @@ describe('TestDriver', () => {
   });
 
   it('should be possible to extend TestDriver', async () => {
-    const TestDriver = createTestDriver();
+    const AppTestDriver = createTestDriver();
 
     interface TestCompProps {
       text: string;
@@ -235,7 +244,7 @@ describe('TestDriver', () => {
       </div>
     );
 
-    class TestCompDriver extends TestDriver<TestCompProps> {
+    class TestCompDriver extends AppTestDriver<TestCompProps> {
       when = {
         created: () => this.render(TestComp),
       };
@@ -245,9 +254,9 @@ describe('TestDriver', () => {
       };
     }
 
-    const testCompDriver = new TestCompDriver();
-    await testCompDriver.givenProp('text', 'hello world').when.created();
+    const driver = new TestCompDriver();
+    await driver.givenProp('text', 'hello world').when.created();
 
-    expect(testCompDriver.get.content()).toEqual('hello world');
+    expect(driver.get.content()).toEqual('hello world');
   });
 });
