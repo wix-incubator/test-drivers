@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TestDriverConfig } from './test-driver-config';
-import { createTestDriver, TestDriver } from './test-driver';
+import { createTestDriver, TestDriver, driverFactory } from './test-driver';
 import { ApiMock, Method, createApiMock } from '../api-mocks';
 
 const SimpleFunctionComponent: React.FC = () => (
@@ -25,6 +25,8 @@ describe('TestDriver', () => {
 
     expect(driver.getByDataHook('child').exists()).toEqual(true);
     expect(driver.getByDataHook('child').text()).toEqual('Child');
+
+    driver.cleanup();
   });
 
   it('should wrap component', async () => {
@@ -40,6 +42,8 @@ describe('TestDriver', () => {
     expect(driver.getByDataHook('wrapper').exists()).toEqual(true);
     expect(driver.getByDataHook('child').exists()).toEqual(true);
     expect(driver.getByDataHook('wrapper').text()).toEqual('Child');
+
+    driver.cleanup();
   });
 
   it('should provide props', async () => {
@@ -59,6 +63,8 @@ describe('TestDriver', () => {
 
     expect(driver.getProp('text')).toEqual('hello');
     expect(driver.getByDataHook('content').text()).toEqual('hello');
+
+    driver.cleanup();
   });
 
   it('should have initial environment', async () => {
@@ -90,6 +96,8 @@ describe('TestDriver', () => {
 
     expect(driver.getEnv('headerText')).toEqual('Header!');
     expect(driver.getByDataHook('header').text()).toEqual('Header!');
+
+    driver.cleanup();
   });
 
   it('should have custom environment', async () => {
@@ -122,6 +130,8 @@ describe('TestDriver', () => {
 
     expect(driver.getEnv('headerText')).toEqual('New Header!');
     expect(driver.getByDataHook('header').text()).toEqual('New Header!');
+
+    driver.cleanup();
   });
 
   it('should unmount the component during cleanup', async () => {
@@ -175,6 +185,8 @@ describe('TestDriver', () => {
     const driver = new AppTestDriver();
 
     expect(() => driver.cleanup()).not.toThrow();
+
+    driver.cleanup();
   });
 
   it('should assert whether a component exists', async () => {
@@ -186,6 +198,8 @@ describe('TestDriver', () => {
 
     expect(driver.exists()).toEqual(true);
     expect(subDriver.exists()).toEqual(false);
+
+    driver.cleanup();
   });
 
   it('should apply initial api mocks after render', async () => {
@@ -208,6 +222,8 @@ describe('TestDriver', () => {
     await driver.render(SimpleFunctionComponent);
 
     expect(mocker).toHaveBeenCalledWith(getSettingsMock);
+
+    driver.cleanup();
   });
 
   it('should apply api mocks immediately if already rendered', async () => {
@@ -230,6 +246,8 @@ describe('TestDriver', () => {
     driver.givenApiMock(getUpdatedSettingsMock);
 
     expect(mocker).toHaveBeenCalledWith(getUpdatedSettingsMock);
+
+    driver.cleanup();
   });
 
   it('should be possible to extend TestDriver', async () => {
@@ -258,5 +276,57 @@ describe('TestDriver', () => {
     await driver.givenProp('text', 'hello world').when.created();
 
     expect(driver.get.content()).toEqual('hello world');
+
+    driver.cleanup();
+  });
+
+  it('should construct a driver as an object based on a parent TestDriver', async () => {
+    const AppTestDriver = createTestDriver();
+
+    interface TestCompProps {
+      text: string;
+    }
+    const TestComp: React.FC<TestCompProps> = ({ text }) => (
+      <div>
+        <span data-hook="content">{text}</span>
+      </div>
+    );
+
+    const driver = driverFactory(AppTestDriver)(
+      (_driver: TestDriver<TestCompProps>) => ({
+        whenCreated: () => _driver.render(TestComp),
+        content: () => _driver.getByDataHook('content').text(),
+      }),
+    );
+
+    driver._.givenProp('text', 'hello world');
+    await driver.whenCreated();
+
+    expect(driver.content()).toEqual('hello world');
+
+    driver._.cleanup();
+  });
+
+  it('should construct a driver as an object without having a parent TestDriver', async () => {
+    interface TestCompProps {
+      text: string;
+    }
+    const TestComp: React.FC<TestCompProps> = ({ text }) => (
+      <div>
+        <span data-hook="content">{text}</span>
+      </div>
+    );
+
+    const driver = driverFactory()((_driver: TestDriver<TestCompProps>) => ({
+      whenCreated: () => _driver.render(TestComp),
+      content: () => _driver.getByDataHook('content').text(),
+    }));
+
+    driver._.givenProp('text', 'hello world');
+    await driver.whenCreated();
+
+    expect(driver.content()).toEqual('hello world');
+
+    driver._.cleanup();
   });
 });

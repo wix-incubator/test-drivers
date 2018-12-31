@@ -150,3 +150,19 @@ export const createTestDriver = <Environment = any>(
     }
   };
 };
+
+// M = ConsumerDriver Methods
+// P = TestDriver Props
+export type ConsumerDriverFactory<M, P> = (
+  driver: TestDriver<P>,
+) => { [key in keyof M]: M[key] };
+
+export const driverFactory = (_driver: typeof TestDriver = TestDriver) => {
+  const initializedDriver: TestDriver = new _driver();
+  return <P, M extends ReturnType<ConsumerDriverFactory<M, P>>>(
+    consumerDriverFactory: ConsumerDriverFactory<M, P>,
+  ): M & { _: TestDriver<P> } => {
+    const consumerDriver = consumerDriverFactory(initializedDriver);
+    return { _: initializedDriver, ...consumerDriver };
+  };
+};
