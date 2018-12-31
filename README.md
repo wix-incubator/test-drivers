@@ -1,4 +1,7 @@
 # TestDrivers
+
+[![Build Status](https://travis-ci.org/wix-incubator/test-drivers.svg)](https://travis-ci.org/wix-incubator/test-drivers)
+
 Test Drivers is a small library aimed to help developers write better tests more easily.
 
 It's a small concept that makes a huge difference.
