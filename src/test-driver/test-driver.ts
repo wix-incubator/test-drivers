@@ -159,10 +159,10 @@ export type ConsumerDriverFactory<P, E, M> = (
 ) => { [key in keyof M]: M[key] };
 
 export const driverFactory = (_driver: typeof TestDriver = TestDriver) => {
-  const initializedDriver: TestDriver = new _driver();
   return <P, E, M extends ReturnType<ConsumerDriverFactory<P, E, M>>>(
     consumerDriverFactory: ConsumerDriverFactory<P, E, M>,
   ): M & { _: TestDriver<P, E> } => {
+    const initializedDriver: TestDriver = new _driver();
     const consumerDriver = consumerDriverFactory(initializedDriver);
     return { _: initializedDriver, ...consumerDriver };
   };
