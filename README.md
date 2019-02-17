@@ -89,7 +89,7 @@ describe('<UserAvatar />', () => {
   });
   
   afterEach(() => {
-  	driver.cleanup();
+    driver.cleanup();
   });
 
   it('should show the user name', async () => {
