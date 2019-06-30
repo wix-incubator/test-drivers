@@ -13,12 +13,13 @@
     "importHelpers": true,
     "target": "es5",
     "jsx": "react",
-    "lib": ["dom", "es2016"]
+    "lib": ["dom", "esnext"]
   },
   "include": [
     "./test/**/*.ts"
   ],
   "files": [
+    "./node_modules/yoshi/types.d.ts",
     "./src/index.ts"
   ]
 }

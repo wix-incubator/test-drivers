@@ -19,7 +19,7 @@
     "start": "yoshi start",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
-    "test": "yoshi test --jest",
+    "test": "yoshi test",
     "posttest": "yoshi lint",
     "release": "yoshi release"
   },
@@ -32,15 +32,15 @@
     "react-dom": "^16.6.3"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.10",
+    "@types/jest": "^24.0.15",
     "@types/node": "^8.0.0",
     "husky": "~0.14.0",
-    "jest-yoshi-preset": "^3.5.0",
+    "jest-yoshi-preset": "^4.9.5",
     "lint-staged": "^7.2.2",
     "puppeteer": "^1.11.0",
-    "react-test-renderer": "~15.6.0",
-    "typescript": "~3.2.1",
-    "yoshi": "^3.0.0"
+    "react-test-renderer": "~16.6.3",
+    "typescript": "^3.5.2",
+    "yoshi": "^4.9.6"
   },
   "lint-staged": {
     "linters": {

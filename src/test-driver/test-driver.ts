@@ -26,9 +26,8 @@ export class TestDriver<Props = any, Environment = any> {
   }
 
   wrapWith(environment: Environment) {
-    return (
-      componentToWrap: React.ReactElement<Props>,
-    ): React.ReactElement<any> => componentToWrap;
+    return (componentToWrap: React.ReactElement<Props>): React.ReactElement =>
+      componentToWrap;
   }
 
   getInitialEnvironment(): Environment {

@@ -87,7 +87,7 @@ describe('<UserAvatar />', () => {
   beforeEach(() => {
     driver = new UserAvatarDriver();
   });
-  
+
   afterEach(() => {
     driver.cleanup();
   });
