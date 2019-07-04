@@ -1,6 +1,6 @@
 # TestDrivers
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Build Status](https://travis-ci.org/wix-incubator/test-drivers.svg)](https://travis-ci.org/wix-incubator/test-drivers)
 [![npm version](https://img.shields.io/npm/v/test-drivers.svg)](https://www.npmjs.com/package/test-drivers)
 
