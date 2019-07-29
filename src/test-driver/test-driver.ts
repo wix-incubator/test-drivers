@@ -14,6 +14,7 @@ export class TestDriver<Props = any, Environment = any> {
   apiMocks: ApiMock[];
   isRendered: boolean;
   attachedToDOM: boolean;
+  mounted: boolean;
 
   constructor(component?) {
     this.component = component;
@@ -23,6 +24,7 @@ export class TestDriver<Props = any, Environment = any> {
     this.apiMocks = this.getDefaultApiMocks();
     this.isRendered = false;
     this.attachedToDOM = false;
+    this.mounted = false;
   }
 
   wrapWith(environment: Environment) {
@@ -92,6 +94,7 @@ export class TestDriver<Props = any, Environment = any> {
         ? document.body.appendChild(document.createElement('div'))
         : undefined,
     });
+    this.mounted = true;
 
     await this.update();
 
@@ -106,18 +109,17 @@ export class TestDriver<Props = any, Environment = any> {
   }
 
   cleanup(): this {
-    if (!this.component) {
-      return this;
+    if (this.component && this.mounted) {
+      if (this.attachedToDOM) {
+        const parentElement = this.component.getDOMNode().parentElement;
+        this.component.detach();
+        parentElement && parentElement.remove();
+      } else {
+        this.component.unmount();
+      }
     }
 
-    if (this.attachedToDOM) {
-      const parentElement = this.component.getDOMNode().parentElement;
-      this.component.detach();
-      parentElement && parentElement.remove();
-    } else {
-      this.component.unmount();
-    }
-
+    this.mounted = false;
     return this;
   }
 
