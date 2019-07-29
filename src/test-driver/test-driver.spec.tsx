@@ -189,6 +189,16 @@ describe('TestDriver', () => {
     driver.cleanup();
   });
 
+  it('should not throw if cleanup is called twice', async () => {
+    const AppTestDriver = createTestDriver();
+    const driver = new AppTestDriver();
+    await driver.render(SimpleFunctionComponent);
+
+    driver.cleanup();
+
+    expect(() => driver.cleanup()).not.toThrow();
+  });
+
   it('should assert whether a component exists', async () => {
     const AppTestDriver = createTestDriver();
     const driver = new AppTestDriver();
