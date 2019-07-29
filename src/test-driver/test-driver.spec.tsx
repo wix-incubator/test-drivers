@@ -15,6 +15,8 @@ describe('TestDriver', () => {
 
     expect(driver.getByDataHook('child').exists()).toEqual(true);
     expect(driver.getByDataHook('child').text()).toEqual('Child');
+
+    driver.cleanup();
   });
 
   it('should render a simple component by creating a TestDriver via createTestDriver()', async () => {
@@ -185,8 +187,6 @@ describe('TestDriver', () => {
     const driver = new AppTestDriver();
 
     expect(() => driver.cleanup()).not.toThrow();
-
-    driver.cleanup();
   });
 
   it('should not throw if cleanup is called twice', async () => {
