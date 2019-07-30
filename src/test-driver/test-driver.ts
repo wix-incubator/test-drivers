@@ -15,6 +15,7 @@ export class TestDriver<Props = any, Environment = any> {
   isRendered: boolean;
   attachedToDOM: boolean;
   mounted: boolean;
+  hooks: Hooks;
 
   constructor(component?) {
     this.component = component;
@@ -25,6 +26,7 @@ export class TestDriver<Props = any, Environment = any> {
     this.isRendered = false;
     this.attachedToDOM = false;
     this.mounted = false;
+    this.hooks = {};
   }
 
   wrapWith(environment: Environment) {
@@ -89,12 +91,16 @@ export class TestDriver<Props = any, Environment = any> {
 
     this.applyApiMocks();
 
+    this.hooks.preRender && this.hooks.preRender();
+
     this.component = mount(wrappedComponent, {
       attachTo: options.attachToDOM
         ? document.body.appendChild(document.createElement('div'))
         : undefined,
     });
+
     this.mounted = true;
+    this.hooks.postRender && this.hooks.postRender();
 
     await this.update();
 
@@ -168,3 +174,8 @@ export const driverFactory = (_driver: typeof TestDriver = TestDriver) => {
     return { _: initializedDriver, ...consumerDriver };
   };
 };
+
+export interface Hooks {
+  preRender?(): void;
+  postRender?(): void;
+}

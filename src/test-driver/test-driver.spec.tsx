@@ -31,6 +31,41 @@ describe('TestDriver', () => {
     driver.cleanup();
   });
 
+  describe ('hooks', () => {
+    const events: string[] = [];
+
+    beforeEach(() => {
+      events.length = 0;
+    });
+
+    const whileRenderFunction = () => {
+      events.push('rendered');
+      return 'child';
+    };
+
+    const SomeComponent: React.FC = () => (
+      <span data-hook="child">{whileRenderFunction()}</span>
+    );
+
+    it('should run pre-render hook', async () => {
+      const AppTestDriver = createTestDriver({hooks: {preRender: () => events.push('pre-render')}});
+      const driver = new AppTestDriver();
+
+      await driver.render(SomeComponent);
+
+      expect(events).toEqual(['pre-render', 'rendered'])
+    });
+
+    it('should run post-render hook', async () => {
+      const AppTestDriver = createTestDriver({hooks: {postRender: () => events.push('post-render')}});
+      const driver = new AppTestDriver();
+
+      await driver.render(SomeComponent);
+
+      expect(events).toEqual(['rendered', 'post-render'])
+    });
+  });
+
   it('should wrap component', async () => {
     const AppTestDriver = createTestDriver({
       wrapWith: () => componentToWrap => {
