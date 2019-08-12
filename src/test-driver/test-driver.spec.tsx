@@ -31,6 +31,25 @@ describe('TestDriver', () => {
     driver.cleanup();
   });
 
+  it('should prevent multiple renders of the same driver', async () =>{
+    const AppTestDriver = createTestDriver();
+    const driver = new AppTestDriver();
+
+    await driver.render(SimpleFunctionComponent);
+
+    let secondRenderError;
+    try {
+      await driver.render(SimpleFunctionComponent)
+    }
+    catch (e) {
+      secondRenderError = e;
+    }
+
+    expect(() => {throw secondRenderError}).toThrowError('The component was already rendered! Multiple renders are not allowed.');
+
+    driver.cleanup();
+  });
+
   it('should wrap component', async () => {
     const AppTestDriver = createTestDriver({
       wrapWith: () => componentToWrap => {

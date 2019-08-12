@@ -81,6 +81,12 @@ export class TestDriver<Props = any, Environment = any> {
     component: React.ComponentType<Props>,
     options = { attachToDOM: false },
   ): Promise<this> {
+    if (this.isRendered) {
+      throw new Error(
+        'The component was already rendered! Multiple renders are not allowed.',
+      );
+    }
+
     this.isRendered = true;
     this.attachedToDOM = options.attachToDOM;
 
