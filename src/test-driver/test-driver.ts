@@ -44,7 +44,7 @@ export class TestDriver<Props = any, Environment = any> {
     // nothing
   }
 
-  givenProp<T extends keyof Props>(key: T, value: Props[T]) {
+  givenProp<T extends keyof Props>(key: T, value: Props[T]): this {
     this.componentData[key] = value;
     return this;
   }
@@ -53,7 +53,7 @@ export class TestDriver<Props = any, Environment = any> {
     return this.componentData[key];
   }
 
-  givenEnv<T extends keyof Environment>(key: T, value: Environment[T]) {
+  givenEnv<T extends keyof Environment>(key: T, value: Environment[T]): this {
     this.environment[key] = value;
     return this;
   }

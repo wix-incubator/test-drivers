@@ -1,1 +1,5 @@
-export { createTestDriver, TestDriver } from './test-driver/test-driver';
+export {
+  createTestDriver,
+  TestDriver,
+  driverFactory,
+} from './test-driver/test-driver';
