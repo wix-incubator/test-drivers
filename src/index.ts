@@ -9,4 +9,4 @@ export {
   ApiMockRequestBuilder,
   ApiMockResponseBuilder,
   createApiMock,
-} from './api-mocks'
+} from './api-mocks';
