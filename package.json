@@ -40,7 +40,7 @@
     "puppeteer": "^1.11.0",
     "react-test-renderer": "^16.8.3",
     "typescript": "^3.9.0",
-    "yoshi": "^4.9.6"
+    "@wix/yoshi": "^4.9.6"
   },
   "lint-staged": {
     "linters": {
